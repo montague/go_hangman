@@ -1,7 +1,8 @@
-package hangman
+package main
 
 import "testing"
 import "strings"
+
 
 func TestNewGame(t *testing.T) {
 	g := NewGame("omg")

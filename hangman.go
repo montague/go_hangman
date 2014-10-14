@@ -1,11 +1,42 @@
-package hangman
+package main
 
 import (
-	//"bufio"
+	"bufio"
 	"fmt"
+	"math/rand"
+	"os"
 	"strings"
-	//"os"
+	"time"
 )
+
+var WordList = make([]string, 0)
+var WordsUsed = make(map[string]bool)
+
+func loadWords() {
+	wordsFilePath := "data/valid_words_list.txt"
+	f, err := os.Open(wordsFilePath)
+	defer f.Close()
+	if err != nil {
+		panic(err)
+	}
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		word := scanner.Text()
+		WordList = append(WordList, word)
+		WordsUsed[word] = false
+	}
+}
+
+func initializeGame() {
+	loadWords()
+	rand.Seed(time.Now().Unix())
+}
+
+func getWord() string {
+	word := WordList[rand.Intn(len(WordList))]
+	WordsUsed[word] = true
+	return word
+}
 
 type GameState struct {
 	Misses int
@@ -22,14 +53,16 @@ func NewGame(word string) *GameState {
 	return g
 }
 
+func getGuess() string {
+	fmt.Print("guess a letter: ")
+	bio := bufio.NewReader(os.Stdin)
+	line, _, _ := bio.ReadLine()
+	return string(line[0])
+}
+
 func main() {
-	//word := "hello world"
-	//fmt.Print("Enter some input: ")
-	//bio := bufio.NewReader(os.Stdin)
-	//line, _, _ := bio.ReadLine()
-	//fmt.Printf("input was: %s\n", line)
-	m := make([]string, 12)
-	m = append(m, "omg")
-	g := NewGame("omg")
-	fmt.Println(g)
+	initializeGame()
+	guess := getGuess()
+	fmt.Println("guess: ", guess)
+	fmt.Println("word: ", getWord())
 }
