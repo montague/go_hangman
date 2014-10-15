@@ -26,9 +26,10 @@ func loadWords(wordsFile string) ([]string, map[string]bool) {
 	return wordList, wordsUsed
 }
 
-func getRandomWord(wordList []string, wordsUsed [string]bool) string {
+func getRandomWord(wordList []string, wordsUsed map[string]bool) string {
+	var word string
 	for {
-		word := wordList[rand.Intn(len(wordList))]
+		word = wordList[rand.Intn(len(wordList))]
 		if !wordsUsed[word] {
 			wordsUsed[word] = true
 			break
@@ -53,7 +54,7 @@ func NewGame(word string) *GameState {
 }
 
 func getBlanksForWord(word string) []string {
-	blanks = make([]string, len(word))
+	blanks := make([]string, len(word))
 	for i, _ := range blanks {
 		blanks[i] = "_"
 	}
@@ -67,20 +68,31 @@ func getGuess() string {
 	return string(line[0])
 }
 
+func updateBlanks(word string, blanks []string, letter string) {
+	letters := strings.Split(word, "")
+	for i, _ := range letters {
+		if letters[i] == letter {
+			blanks[i] = letter
+		}
+	}
+}
+
 func printWordStatus(blanks []string) {
 	fmt.Println(strings.Join(blanks, " "))
 }
 
 func main() {
-	wordList, wordsUsed := loadWords("data/valid_words_list.txt")
+	//wordList, wordsUsed := loadWords("data/valid_words_list.txt")
 	rand.Seed(time.Now().Unix())
-	word := getRandomWord(wordList, wordsUsed)
+	//word := getRandomWord(wordList, wordsUsed)
+	word := "hello"
 	blanks := getBlanksForWord(word)
 	guesses := make([]string, 0)
-	guess = getGuess()
+	guess := getGuess()
 	guesses = append(guesses, guess)
-	//guess := getGuess()
 	fmt.Println("guess: ", guess)
-	//printWordStatus(blanks)
-	//fmt.Println("word: ", word)
+	printWordStatus(blanks)
+	updateBlanks(word, blanks, "l")
+	printWordStatus(blanks)
+	fmt.Println("word: ", word)
 }
