@@ -9,32 +9,31 @@ import (
 	"time"
 )
 
-var WordList = make([]string, 0)
-var WordsUsed = make(map[string]bool)
-
-func loadWords() {
-	wordsFilePath := "data/valid_words_list.txt"
-	f, err := os.Open(wordsFilePath)
+func loadWords(wordsFile string) ([]string, map[string]bool) {
+	f, err := os.Open(wordsFile)
 	defer f.Close()
 	if err != nil {
 		panic(err)
 	}
 	scanner := bufio.NewScanner(f)
+	wordList := make([]string, 0)
+	wordsUsed := make(map[string]bool)
 	for scanner.Scan() {
 		word := scanner.Text()
-		WordList = append(WordList, word)
-		WordsUsed[word] = false
+		wordList = append(wordList, word)
+		wordsUsed[word] = false
 	}
+	return wordList, wordsUsed
 }
 
-func initializeGame() {
-	loadWords()
-	rand.Seed(time.Now().Unix())
-}
-
-func getWord() string {
-	word := WordList[rand.Intn(len(WordList))]
-	WordsUsed[word] = true
+func getRandomWord(wordList []string, wordsUsed [string]bool) string {
+	for {
+		word := wordList[rand.Intn(len(wordList))]
+		if !wordsUsed[word] {
+			wordsUsed[word] = true
+			break
+		}
+	}
 	return word
 }
 
@@ -53,6 +52,14 @@ func NewGame(word string) *GameState {
 	return g
 }
 
+func getBlanksForWord(word string) []string {
+	blanks = make([]string, len(word))
+	for i, _ := range blanks {
+		blanks[i] = "_"
+	}
+	return blanks
+}
+
 func getGuess() string {
 	fmt.Print("guess a letter: ")
 	bio := bufio.NewReader(os.Stdin)
@@ -60,9 +67,20 @@ func getGuess() string {
 	return string(line[0])
 }
 
+func printWordStatus(blanks []string) {
+	fmt.Println(strings.Join(blanks, " "))
+}
+
 func main() {
-	initializeGame()
-	guess := getGuess()
+	wordList, wordsUsed := loadWords("data/valid_words_list.txt")
+	rand.Seed(time.Now().Unix())
+	word := getRandomWord(wordList, wordsUsed)
+	blanks := getBlanksForWord(word)
+	guesses := make([]string, 0)
+	guess = getGuess()
+	guesses = append(guesses, guess)
+	//guess := getGuess()
 	fmt.Println("guess: ", guess)
-	fmt.Println("word: ", getWord())
+	//printWordStatus(blanks)
+	//fmt.Println("word: ", word)
 }

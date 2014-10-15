@@ -3,7 +3,6 @@ package main
 import "testing"
 import "strings"
 
-
 func TestNewGame(t *testing.T) {
 	g := NewGame("omg")
 
@@ -20,5 +19,17 @@ func TestNewGame(t *testing.T) {
 	}
 	if g.Word != "omg" {
 		t.Error("Word should be 'omg'")
+	}
+}
+
+func TestLoadWords(t *testing.T) {
+	wordList, wordsUsed := loadWords("data/test_list.txt")
+	for i, word := range []string{"firstword", "secondword", "thirdword"} {
+		if wordList[i] != word {
+			t.Error("word list should contain ", word, " at index ", i)
+		}
+		if wordsUsed[word] {
+			t.Error("word used: \"", word, "\" should be false")
+		}
 	}
 }
