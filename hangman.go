@@ -77,7 +77,10 @@ func updateBlanks(word string, blanks []string, letter string) {
 	}
 }
 
-func printWordStatus(blanks []string) {
+func printGameStatus(blanks []string, guesses []string) {
+	if len(guesses) > 0 {
+		fmt.Println("guesses: ", strings.Join(guesses, ""))
+	}
 	fmt.Println(strings.Join(blanks, " "))
 }
 
@@ -96,11 +99,15 @@ func main() {
 	word := getRandomWord(wordList, wordsUsed)
 	blanks := getBlanksForWord(word)
 	guesses := make([]string, 0)
-	guess := getGuess()
-	guesses = append(guesses, guess)
-	fmt.Println("guess: ", guess)
-	printWordStatus(blanks)
-	updateBlanks(word, blanks, "l")
-	printWordStatus(blanks)
-	fmt.Println("word: ", word)
+	for {
+		printGameStatus(blanks, guesses)
+		guess := getGuess()
+		guesses = append(guesses, guess)
+		updateBlanks(word, blanks, guess)
+		if wonGame(blanks) {
+			fmt.Println(strings.Join(strings.Split(word, ""), " "))
+			fmt.Println("YOU WON!!")
+			return
+		}
+	}
 }
