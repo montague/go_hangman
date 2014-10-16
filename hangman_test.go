@@ -6,19 +6,22 @@ import "strings"
 func TestNewGame(t *testing.T) {
 	g := NewGame("omg")
 
-	if g.Misses != 0 {
-		t.Error("New game should start with 0 misses")
+	if g.MissesLeft != 8 {
+		t.Error("New game should start with 8 misses left")
 	}
 	if len(g.Blanks) != 3 {
 		t.Error("Blanks should have length 3")
 	}
-	for _, c := range strings.Split("omg", "") {
-		if g.Blanks[c] != "_" {
-			t.Error("Blanks should have underscore for value: ", c)
+	for i, _ := range strings.Split("omg", "") {
+		if g.Blanks[i] != "_" {
+			t.Error("Blanks should have underscore for index: ", i)
 		}
 	}
 	if g.Word != "omg" {
 		t.Error("Word should be 'omg'")
+	}
+	if g.LettersCorrect != 0 {
+		t.Error("Letters correct should start at 0")
 	}
 }
 
@@ -34,28 +37,33 @@ func TestLoadWords(t *testing.T) {
 	}
 }
 
-func TestGetBlanksForWord(t *testing.T) {
-	blanks := getBlanksForWord("omg")
-	if strings.Join(blanks, "") != "___" {
-		t.Error("blanks should be _ _ _ for omg")
-	}
-}
-
 func TestWonGame(t *testing.T) {
-	if !wonGame([]string{"a", "b"}) {
-		t.Error("should win game if no blanks left")
-	}
-	if wonGame([]string{"_", "b"}) {
-		t.Error("should not win game if blanks are left")
-	}
+	g = NewGame("omg")
+
 }
 
-func TestUpdateBlanks(t *testing.T) {
-	blanks := []string{"_", "_", "_"}
-	word := "omg"
-	letter := "m"
-	updateBlanks(word, blanks, letter)
-	if blanks[1] != "m" {
-		t.Error("UpdateBlanks should update the correct letter")
-	}
-}
+//func TestGetBlanksForWord(t *testing.T) {
+//blanks := getBlanksForWord("omg")
+//if strings.Join(blanks, "") != "___" {
+//t.Error("blanks should be _ _ _ for omg")
+//}
+//}
+
+//func TestWonGame(t *testing.T) {
+//if !wonGame([]string{"a", "b"}) {
+//t.Error("should win game if no blanks left")
+//}
+//if wonGame([]string{"_", "b"}) {
+//t.Error("should not win game if blanks are left")
+//}
+//}
+
+//func TestUpdateBlanks(t *testing.T) {
+//blanks := []string{"_", "_", "_"}
+//word := "omg"
+//letter := "m"
+//updateBlanks(word, blanks, letter)
+//if blanks[1] != "m" {
+//t.Error("UpdateBlanks should update the correct letter")
+//}
+//}

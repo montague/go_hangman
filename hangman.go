@@ -39,75 +39,90 @@ func getRandomWord(wordList []string, wordsUsed map[string]bool) string {
 }
 
 type GameState struct {
-	Misses int
-	Word   string
-	Blanks map[string]string
+	MissesLeft     int
+	Word           string
+	LettersCorrect int
+	Blanks         []string
+	LettersGuessed []string
 }
 
 func NewGame(word string) *GameState {
 	g := &GameState{Word: word}
-	g.Blanks = make(map[string]string)
-	for _, c := range strings.Split(word, "") {
-		g.Blanks[c] = "_"
+	g.MissesLeft = 8
+	g.LettersCorrect = 0
+	g.Blanks = make([]string, 0)
+	for i := 0; i < len(word); i++ {
+		g.Blanks = append(g.Blanks, "_")
 	}
 	return g
 }
 
-func getBlanksForWord(word string) []string {
-	blanks := make([]string, len(word))
-	for i, _ := range blanks {
-		blanks[i] = "_"
+func (this *GameState) PrintStatus() {
+	if len(this.LettersGuessed) > 0 {
+		fmt.Println("already guessed: ", strings.Join(this.LettersGuessed, " "))
+		fmt.Println("guesses left: ", this.MissesLeft)
 	}
-	return blanks
+
+	fmt.Println(strings.Join(this.Blanks, " "))
 }
 
-func getGuess() string {
+func (this *GameState) Guess() {
+	this.PrintStatus()
 	fmt.Print("guess a letter: ")
 	bio := bufio.NewReader(os.Stdin)
 	line, _, _ := bio.ReadLine()
-	return string(line[0])
+	guess := string(line[0])
+	alreadyGuessed := false
+	for _, c := range this.LettersGuessed {
+		if c == guess {
+			alreadyGuessed = true
+			break
+		}
+	}
+	if !alreadyGuessed {
+		this.LettersGuessed = append(this.LettersGuessed, guess)
+	}
+	this.UpdateGuesses(guess)
 }
 
-func updateBlanks(word string, blanks []string, letter string) {
-	letters := strings.Split(word, "")
+func (this *GameState) UpdateGuesses(guess string) {
+	letters := strings.Split(this.Word, "")
+	missedGuess := true
 	for i, _ := range letters {
-		if letters[i] == letter {
-			blanks[i] = letter
+		if letters[i] == guess {
+			this.Blanks[i] = guess
+			missedGuess = false
+			this.LettersCorrect += 1
 		}
+	}
+	if missedGuess {
+		this.MissesLeft -= 1
 	}
 }
 
-func printGameStatus(blanks []string, guesses []string) {
-	if len(guesses) > 0 {
-		fmt.Println("guesses: ", strings.Join(guesses, ""))
-	}
-	fmt.Println(strings.Join(blanks, " "))
+func (this *GameState) WonGame() bool {
+	return len(this.Word) == this.LettersCorrect
 }
 
-func wonGame(blanks []string) bool {
-	for _, letter := range blanks {
-		if letter == "_" {
-			return false
-		}
-	}
-	return true
+func (this *GameState) LostGame() bool {
+	return this.MissesLeft == 0
 }
 
 func main() {
 	wordList, wordsUsed := loadWords("data/valid_words_list.txt")
 	rand.Seed(time.Now().Unix())
-	word := getRandomWord(wordList, wordsUsed)
-	blanks := getBlanksForWord(word)
-	guesses := make([]string, 0)
+	game := NewGame(getRandomWord(wordList, wordsUsed))
 	for {
-		printGameStatus(blanks, guesses)
-		guess := getGuess()
-		guesses = append(guesses, guess)
-		updateBlanks(word, blanks, guess)
-		if wonGame(blanks) {
-			fmt.Println(strings.Join(strings.Split(word, ""), " "))
+		game.Guess()
+		if game.WonGame() {
 			fmt.Println("YOU WON!!")
 			return
 		}
+		if game.LostGame() {
+			fmt.Println(strings.Join(strings.Split(game.Word, ""), " "))
+			fmt.Println("YOU LOST!!")
+			return
+		}
+
 	}
 }
