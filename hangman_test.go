@@ -12,9 +12,12 @@ func TestNewGame(t *testing.T) {
 	if len(g.Blanks) != 3 {
 		t.Error("Blanks should have length 3")
 	}
-	for i, _ := range strings.Split("omg", "") {
+	for i, c := range strings.Split("omg", "") {
 		if g.Blanks[i] != "_" {
 			t.Error("Blanks should have underscore for index: ", i)
+		}
+		if g.Letters[i] != string(c) {
+			t.Error("Letters should have the correct letter: ", c)
 		}
 	}
 	if g.Word != "omg" {
@@ -35,9 +38,4 @@ func TestLoadWords(t *testing.T) {
 			t.Error("word used: \"", word, "\" should be false")
 		}
 	}
-}
-
-func TestWonGame(t *testing.T) {
-	g = NewGame("omg")
-
 }
