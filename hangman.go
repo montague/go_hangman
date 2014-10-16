@@ -81,11 +81,19 @@ func printWordStatus(blanks []string) {
 	fmt.Println(strings.Join(blanks, " "))
 }
 
+func wonGame(blanks []string) bool {
+	for _, letter := range blanks {
+		if letter == "_" {
+			return false
+		}
+	}
+	return true
+}
+
 func main() {
-	//wordList, wordsUsed := loadWords("data/valid_words_list.txt")
+	wordList, wordsUsed := loadWords("data/valid_words_list.txt")
 	rand.Seed(time.Now().Unix())
-	//word := getRandomWord(wordList, wordsUsed)
-	word := "hello"
+	word := getRandomWord(wordList, wordsUsed)
 	blanks := getBlanksForWord(word)
 	guesses := make([]string, 0)
 	guess := getGuess()

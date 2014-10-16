@@ -33,3 +33,19 @@ func TestLoadWords(t *testing.T) {
 		}
 	}
 }
+
+func TestGetBlanksForWord(t *testing.T) {
+	blanks := getBlanksForWord("omg")
+	if strings.Join(blanks, "") != "___" {
+		t.Error("blanks should be _ _ _ for omg")
+	}
+}
+
+func TestWonGame(t *testing.T) {
+	if !wonGame([]string{"a", "b"}) {
+		t.Error("should win game if no blanks left")
+	}
+	if wonGame([]string{"_", "b"}) {
+		t.Error("should not win game if blanks are left")
+	}
+}
