@@ -41,29 +41,3 @@ func TestWonGame(t *testing.T) {
 	g = NewGame("omg")
 
 }
-
-//func TestGetBlanksForWord(t *testing.T) {
-//blanks := getBlanksForWord("omg")
-//if strings.Join(blanks, "") != "___" {
-//t.Error("blanks should be _ _ _ for omg")
-//}
-//}
-
-//func TestWonGame(t *testing.T) {
-//if !wonGame([]string{"a", "b"}) {
-//t.Error("should win game if no blanks left")
-//}
-//if wonGame([]string{"_", "b"}) {
-//t.Error("should not win game if blanks are left")
-//}
-//}
-
-//func TestUpdateBlanks(t *testing.T) {
-//blanks := []string{"_", "_", "_"}
-//word := "omg"
-//letter := "m"
-//updateBlanks(word, blanks, letter)
-//if blanks[1] != "m" {
-//t.Error("UpdateBlanks should update the correct letter")
-//}
-//}
