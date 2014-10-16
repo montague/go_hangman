@@ -49,3 +49,13 @@ func TestWonGame(t *testing.T) {
 		t.Error("should not win game if blanks are left")
 	}
 }
+
+func TestUpdateBlanks(t *testing.T) {
+	blanks := []string{"_", "_", "_"}
+	word := "omg"
+	letter := "m"
+	updateBlanks(word, blanks, letter)
+	if blanks[1] != "m" {
+		t.Error("UpdateBlanks should update the correct letter")
+	}
+}
